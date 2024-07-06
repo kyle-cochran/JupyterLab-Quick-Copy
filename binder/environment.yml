@@ -1,10 +1,10 @@
-# a mybinder.org-ready environment for demoing jlab_quick_copy
+# a mybinder.org-ready environment for demoing jupyterlab_copy_to_recent
 # this environment may also be used locally on Linux/MacOS/Windows, e.g.
 #
 #   conda env update --file binder/environment.yml
-#   conda activate jlab-quick-copy-demo
+#   conda activate jupyterlab-copy-to-recent-demo
 #
-name: jlab-quick-copy-demo
+name: jupyterlab-copy-to-recent-demo
 
 channels:
   - conda-forge

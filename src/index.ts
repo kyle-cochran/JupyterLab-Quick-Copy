@@ -19,7 +19,7 @@ import { Menu } from '@lumino/widgets';
 namespace CommandIDs {
   export const copyFile = 'filebrowser:copy';
   export const pasteFile = 'filebrowser:paste';
-  export const copyPasteFile = 'jlab-quick-copy:copypaste'; // todo
+  export const copyPasteFile = 'jupyterlab-copy-to-recent:copypaste'; // todo
 }
 
 
@@ -220,10 +220,10 @@ class RecentsManager {
 
 
 /**
- * Initialization data for the jlab-quick-copy extension.
+ * Initialization data for the jupyterlab-copy-to-recent extension.
  */
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'jlab-quick-copy:plugin',
+  id: 'jupyterlab-copy-to-recent:plugin',
   description: 'Copy files to the most recently open folders',
   autoStart: true,
 
@@ -325,7 +325,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     });
 
     recentsManager.init();
-    console.log('JupyterLab extension jlab-quick-copy is activated!');
+    console.log('JupyterLab extension jupyterlab-copy-to-recent is activated!');
   }
 };
 

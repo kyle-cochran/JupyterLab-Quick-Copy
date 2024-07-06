@@ -26,5 +26,5 @@ jobs:
       - name: Upload Distributions
         uses: actions/upload-artifact@v4
         with:
-          name: jlab_quick_copy-releaser-dist-${{ github.run_number }}
+          name: jupyterlab_copy_to_recent-releaser-dist-${{ github.run_number }}
           path: .jupyter_releaser_checkout/dist

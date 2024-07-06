@@ -1,7 +1,7 @@
 {
-  "name": "jlab-quick-copy-ui-tests",
+  "name": "jupyterlab-copy-to-recent-ui-tests",
   "version": "1.0.0",
-  "description": "JupyterLab jlab-quick-copy Integration Tests",
+  "description": "JupyterLab jupyterlab-copy-to-recent Integration Tests",
   "private": true,
   "scripts": {
     "start": "jupyter lab --config jupyter_server_test_config.py",

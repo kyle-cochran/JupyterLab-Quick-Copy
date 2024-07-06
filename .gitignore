@@ -7,9 +7,9 @@ node_modules/
 *.egg-info/
 .ipynb_checkpoints
 *.tsbuildinfo
-jlab_quick_copy/labextension
+jupyterlab_copy_to_recent/labextension
 # Version file is handled by hatchling
-jlab_quick_copy/_version.py
+jupyterlab_copy_to_recent/_version.py
 
 # Integration tests
 ui-tests/test-results/

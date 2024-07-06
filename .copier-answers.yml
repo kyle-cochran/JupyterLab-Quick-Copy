@@ -6,9 +6,9 @@ author_name: Kyle Cochran
 has_binder: true
 has_settings: false
 kind: frontend
-labextension_name: jlab-quick-copy
+labextension_name: jupyterlab-copy-to-recent
 project_short_description: Quickly copy files to most recently open folders
-python_name: jlab_quick_copy
-repository: https://github.com/kyle-cochran/JupyterLab-Quick-Copy
+python_name: jupyterlab_copy_to_recent
+repository: https://github.com/kyle-cochran/jupyterlab-copy-to-recent
 test: true
 

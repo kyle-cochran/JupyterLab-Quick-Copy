@@ -1,7 +1,7 @@
-# jlab_quick_copy
+# jupyterlab_copy_to_recent
 
-[![Github Actions Status](https://github.com/kyle-cochran/JupyterLab-Quick-Copy/workflows/Build/badge.svg)](https://github.com/kyle-cochran/JupyterLab-Quick-Copy/actions/workflows/build.yml)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/kyle-cochran/JupyterLab-Quick-Copy/main?urlpath=lab)
+[![Github Actions Status](https://github.com/kyle-cochran/jupyterlab-copy-to-recent/workflows/Build/badge.svg)](https://github.com/kyle-cochran/jupyterlab-copy-to-recent/actions/workflows/build.yml)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/kyle-cochran/jupyterlab-copy-to-recent/main?urlpath=lab)
 
 
 Quickly copy files to most recently open folders
@@ -15,7 +15,7 @@ Quickly copy files to most recently open folders
 To install the extension, execute:
 
 ```bash
-pip install jlab_quick_copy
+pip install jupyterlab_copy_to_recent
 ```
 
 ## Uninstall
@@ -23,7 +23,7 @@ pip install jlab_quick_copy
 To remove the extension, execute:
 
 ```bash
-pip uninstall jlab_quick_copy
+pip uninstall jupyterlab_copy_to_recent
 ```
 
 ## Contributing
@@ -38,7 +38,7 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the jlab_quick_copy directory
+# Change directory to the jupyterlab_copy_to_recent directory
 # Install package in development mode
 pip install -e "."
 # Link your development version of the extension with JupyterLab
@@ -67,12 +67,12 @@ jupyter lab build --minimize=False
 ### Development uninstall
 
 ```bash
-pip uninstall jlab_quick_copy
+pip uninstall jupyterlab_copy_to_recent
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `jlab-quick-copy` within that folder.
+folder is located. Then you can remove the symlink named `jupyterlab-copy-to-recent` within that folder.
 
 ### Testing the extension
 
