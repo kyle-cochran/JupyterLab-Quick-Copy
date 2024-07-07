@@ -8,7 +8,6 @@ import { IDocumentManager } from '@jupyterlab/docmanager';
 import { IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { Contents, ServerConnection } from '@jupyterlab/services';
-import { ITranslator } from '@jupyterlab/translation';
 import { IStateDB } from '@jupyterlab/statedb';
 import { CommandRegistry } from '@lumino/commands';
 import { each } from '@lumino/algorithm';
@@ -17,9 +16,7 @@ import { Menu } from '@lumino/widgets';
 
 
 namespace CommandIDs {
-  export const copyFile = 'filebrowser:copy';
-  export const pasteFile = 'filebrowser:paste';
-  export const copyPasteFile = 'jupyterlab-copy-to-recent:copypaste'; // todo
+  export const copyPasteFile = 'jupyterlab-copy-to-recent:copypaste';
 }
 
 
@@ -78,7 +75,7 @@ class RecentsManager {
     this.serverRoot = PageConfig.getOption('serverRoot');
     this.stateDB = stateDB;
     this.contentsManager = contents;
-    // This menu will appear in the File menu
+    // This menu will appear in the context menu
     this.recentsMenu = new Menu({ commands });
     this.recentsMenu.title.label = 'Copy to Recent';
     // Listen for updates to _recents
@@ -116,35 +113,30 @@ class RecentsManager {
       path,
       contentType
     };
-    console.log("adding recent", recent);
     const recents = this.recents;
-    const directories = recents.filter(r => r.contentType === 'directory');
-    const files = recents.filter(r => r.contentType !== 'directory');
-    const destination = contentType === 'directory' ? directories : files;
-    // Check if it's already present; if so remove it
-    const existingIndex = destination.findIndex(r => r.path === path);
-    if (existingIndex >= 0) {
-      destination.splice(existingIndex, 1);
-    }
-    // Add to the front of the list
-    destination.unshift(recent);
-    // Keep up to 10 of each type of recent path
-    if (destination.length > 10) {
-      destination.pop();
+
+    if (recent.contentType !== 'directory') {
+      return;
     }
 
-    console.log('destination', destination);
-    console.log('recents', this.recents);
-    this.recents = directories
+    // Check if it's already present; if so remove it
+    const existingIndex = recents.findIndex(r => r.path === path);
+    if (existingIndex >= 0) {
+      recents.splice(existingIndex, 1);
+    }
+    // Add to the front of the list
+    recents.unshift(recent);
+    // Keep up to 10 of each type of recent path
+    if (recents.length > 10) {
+      recents.pop();
+    }
+
+    this.recents = recents
   }
 
   removeRecents(paths: (string | null | undefined)[]) {
     const recents = this.recents;
     this.recents = recents.filter(r => paths.indexOf(r.path) === -1);
-  }
-
-  clearRecents() {
-    this.recents = [];
   }
 
   async validateRecents() {
@@ -228,7 +220,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
 
   requires: [IFileBrowserFactory, IDefaultFileBrowser, IStateDB, IDocumentManager],
-  optional: [ITranslator],
 
   activate: (
     app: JupyterFrontEnd,
@@ -236,10 +227,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     defaultBrowser: IDefaultFileBrowser,
     stateDB: IStateDB,
     docManager: IDocumentManager,
-    translator: ITranslator | null
   ) => {
-    console.log(defaultBrowser);
-    // const trans = (translator ?? nullTranslator).load('jupyter_archive');
 
     const { commands, serviceManager } = app;
     const { tracker } = factory;
@@ -250,22 +238,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
       serviceManager.contents
     );
 
+    // Listen for file changes
     defaultBrowser.model.fileChanged.connect(async (_, args) => {
 
+      if (args.newValue === null || args.newValue.path === null || args.newValue.path === undefined) {
+        return;
+      }
+      const path = args.newValue.path;
+
       if (args.type === 'new' || args.type === 'rename' || args.type === 'save') {
-
-        if (args.newValue === null) {
-          return;
-        }
-        const path = args.newValue.path;
-
-        if (path === null) {
-          return;
-        }
-
-        if (path === undefined) {
-          return;
-        }
 
         const item = await docManager.services.contents.get(path, {
           content: false
@@ -274,40 +255,39 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const contentType = fileType.contentType;
 
         if (contentType === 'directory') {
-          console.log("adding directory to recents", path, contentType);
           recentsManager.addRecent(path, 'directory');
         }
 
-        // Add the containing directory
+        // Add the containing directory for file changes
         if (contentType !== 'directory') {
           const parent =
             path.lastIndexOf('/') > 0 ? path.slice(0, path.lastIndexOf('/')) : '';
           recentsManager.addRecent(parent, 'directory');
         }
-      console.log('recents list', recentsManager.recents);
+
+      } else if (args.type === 'delete') {
+        const parent =
+          path.lastIndexOf('/') > 0 ? path.slice(0, path.lastIndexOf('/')) : '';
+        recentsManager.addRecent(parent, 'directory');
       }
 
     }
 
-
     );
 
-    // matches anywhere on filebrowser
-    const selectorContent = '.jp-DirListing-content';
-
-
-    // Add the 'copyToRecent' command to the file's menu.
+    // Define the 'copyToRecent' command.
     commands.addCommand(CommandIDs.copyPasteFile, {
       execute: args => {
         const widget = tracker.currentWidget;
+        
         if (widget) {
           each(widget.selectedItems(), item => {
-            console.log('copying from ', item.path);
             const recent = args.recent as types.Recent;
-            console.log('copying to ', recent.path);
+            const toPath = utils.mergePaths(recent.path, item.name);
+            console.log('copying', item.name, 'from', item.path, 'to', toPath);
 
-            // const recent_directory = utils.mergePaths(recent.root, recent.path);
-            docManager.copy(item.path, utils.mergePaths(recent.path, item.name));
+            // overwrite file if it already exists
+            docManager.overwrite(item.path, toPath);
           });
         }
       },
@@ -316,6 +296,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
         return recent.path;
       }
     });
+
+    // matches anywhere on filebrowser
+    const selectorContent = '.jp-DirListing-content';
     
     app.contextMenu.addItem({
       type: 'submenu' as Menu.ItemType,
