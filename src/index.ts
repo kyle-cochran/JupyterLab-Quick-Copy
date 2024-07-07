@@ -10,7 +10,6 @@ import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { Contents, ServerConnection } from '@jupyterlab/services';
 import { IStateDB } from '@jupyterlab/statedb';
 import { CommandRegistry } from '@lumino/commands';
-import { each } from '@lumino/algorithm';
 import { Signal } from '@lumino/signaling';
 import { Menu } from '@lumino/widgets';
 
@@ -210,7 +209,6 @@ class RecentsManager {
   }
 }
 
-
 /**
  * Initialization data for the jupyterlab-copy-to-recent extension.
  */
@@ -272,23 +270,32 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
 
     }
-
     );
 
     // Define the 'copyToRecent' command.
     commands.addCommand(CommandIDs.copyPasteFile, {
-      execute: args => {
+      execute: async args => {
         const widget = tracker.currentWidget;
-        
         if (widget) {
-          each(widget.selectedItems(), item => {
+          const items = Array.from(widget.selectedItems());
+
+          for (const item of items) {
             const recent = args.recent as types.Recent;
             const toPath = utils.mergePaths(recent.path, item.name);
-            console.log('copying', item.name, 'from', item.path, 'to', toPath);
 
-            // overwrite file if it already exists
-            docManager.overwrite(item.path, toPath);
-          });
+            // Delete the destination file if it already exists
+            try {
+              await serviceManager.contents.delete(toPath);
+            } catch (e) {
+              if ((e as ServerConnection.ResponseError).response?.status === 404) {
+                // Do nothing
+                console.log('File does not yet exist');
+              }
+            }
+
+            console.log('copying', item.name, 'from', item.path, 'to', toPath);
+            docManager.copy(item.path, toPath);
+          }
         }
       },
       label: args => {
