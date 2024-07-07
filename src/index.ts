@@ -236,7 +236,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       serviceManager.contents
     );
 
-    // Listen for file changes
+    // Listen for file changes and update the recents list
     defaultBrowser.model.fileChanged.connect(async (_, args) => {
 
       if (args.newValue === null || args.newValue.path === null || args.newValue.path === undefined) {
@@ -256,13 +256,14 @@ const plugin: JupyterFrontEndPlugin<void> = {
           recentsManager.addRecent(path, 'directory');
         }
 
-        // Add the containing directory for file changes
+        // Add the containing directory for files
         if (contentType !== 'directory') {
           const parent =
             path.lastIndexOf('/') > 0 ? path.slice(0, path.lastIndexOf('/')) : '';
           recentsManager.addRecent(parent, 'directory');
         }
 
+      // Add the containing directory for deletes
       } else if (args.type === 'delete') {
         const parent =
           path.lastIndexOf('/') > 0 ? path.slice(0, path.lastIndexOf('/')) : '';

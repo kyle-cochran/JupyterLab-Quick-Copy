@@ -4,7 +4,11 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/kyle-cochran/jupyterlab-copy-to-recent/main?urlpath=lab)
 
 
-Quickly copy files to most recently open folders
+Context menu option to copy directly to recently modified folders.
+
+![JupyterLab Copy To Recent demo](jupyterlab-copy-to-recent.gif)
+
+Heavily inspired by [JupyterLab Recents](https://github.com/jupyterlab-contrib/jupyterlab-recents)
 
 ## Requirements
 

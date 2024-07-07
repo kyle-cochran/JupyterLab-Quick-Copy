@@ -1,6 +1,6 @@
 {
     "name": "jupyterlab-copy-to-recent",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Quickly copy files to most recently open folders",
     "keywords": [
         "jupyter",
