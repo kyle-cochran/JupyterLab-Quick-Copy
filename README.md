@@ -6,7 +6,7 @@
 
 Context menu option to copy directly to recently modified folders.
 
-![JupyterLab Copy To Recent demo](jupyterlab-copy-to-recent.gif)
+![JupyterLab Copy To Recent demo](https://raw.githubusercontent.com/kyle-cochran/jupyterlab-copy-to-recent/main/jupyterlab-copy-to-recent.gif)
 
 Heavily inspired by [JupyterLab Recents](https://github.com/jupyterlab-contrib/jupyterlab-recents)
 
