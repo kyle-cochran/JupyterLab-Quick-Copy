@@ -13,11 +13,9 @@ import { CommandRegistry } from '@lumino/commands';
 import { Signal } from '@lumino/signaling';
 import { Menu } from '@lumino/widgets';
 
-
 namespace CommandIDs {
   export const copyPasteFile = 'jupyterlab-copy-to-recent:copypaste';
 }
-
 
 namespace PluginIDs {
   export const recents = 'jupyterlab-recents';
@@ -130,7 +128,7 @@ class RecentsManager {
       recents.pop();
     }
 
-    this.recents = recents
+    this.recents = recents;
   }
 
   removeRecents(paths: (string | null | undefined)[]) {
@@ -156,7 +154,7 @@ class RecentsManager {
       })
     );
 
-    const invalidPaths = invalidPathsOrNulls.filter(x => (x !== undefined));
+    const invalidPaths = invalidPathsOrNulls.filter(x => x !== undefined);
     if (invalidPaths.length > 0) {
       this.removeRecents(invalidPaths);
     }
@@ -171,13 +169,12 @@ class RecentsManager {
         rs.forEach(recent => {
           this.recentsMenu.addItem({
             command: CommandIDs.copyPasteFile,
-            args: { recent },
+            args: { recent }
           });
         });
         this.recentsMenu.addItem({ type: 'separator' });
       }
     });
-
   }
 
   async loadRecents() {
@@ -217,16 +214,20 @@ const plugin: JupyterFrontEndPlugin<void> = {
   description: 'Copy files to the most recently open folders',
   autoStart: true,
 
-  requires: [IFileBrowserFactory, IDefaultFileBrowser, IStateDB, IDocumentManager],
+  requires: [
+    IFileBrowserFactory,
+    IDefaultFileBrowser,
+    IStateDB,
+    IDocumentManager
+  ],
 
   activate: (
     app: JupyterFrontEnd,
     factory: IFileBrowserFactory,
     defaultBrowser: IDefaultFileBrowser,
     stateDB: IStateDB,
-    docManager: IDocumentManager,
+    docManager: IDocumentManager
   ) => {
-
     const { commands, serviceManager } = app;
     const { tracker } = factory;
 
@@ -238,14 +239,20 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
     // Listen for file changes and update the recents list
     defaultBrowser.model.fileChanged.connect(async (_, args) => {
-
-      if (args.newValue === null || args.newValue.path === null || args.newValue.path === undefined) {
+      if (
+        args.newValue === null ||
+        args.newValue.path === null ||
+        args.newValue.path === undefined
+      ) {
         return;
       }
       const path = args.newValue.path;
 
-      if (args.type === 'new' || args.type === 'rename' || args.type === 'save') {
-
+      if (
+        args.type === 'new' ||
+        args.type === 'rename' ||
+        args.type === 'save'
+      ) {
         const item = await docManager.services.contents.get(path, {
           content: false
         });
@@ -259,19 +266,19 @@ const plugin: JupyterFrontEndPlugin<void> = {
         // Add the containing directory for files
         if (contentType !== 'directory') {
           const parent =
-            path.lastIndexOf('/') > 0 ? path.slice(0, path.lastIndexOf('/')) : '';
+            path.lastIndexOf('/') > 0
+              ? path.slice(0, path.lastIndexOf('/'))
+              : '';
           recentsManager.addRecent(parent, 'directory');
         }
 
-      // Add the containing directory for deletes
+        // Add the containing directory for deletes
       } else if (args.type === 'delete') {
         const parent =
           path.lastIndexOf('/') > 0 ? path.slice(0, path.lastIndexOf('/')) : '';
         recentsManager.addRecent(parent, 'directory');
       }
-
-    }
-    );
+    });
 
     // Define the 'copyToRecent' command.
     commands.addCommand(CommandIDs.copyPasteFile, {
@@ -288,7 +295,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
             try {
               await serviceManager.contents.delete(toPath);
             } catch (e) {
-              if ((e as ServerConnection.ResponseError).response?.status === 404) {
+              if (
+                (e as ServerConnection.ResponseError).response?.status === 404
+              ) {
                 // Do nothing
                 console.log('File does not yet exist');
               }
@@ -307,7 +316,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
     // matches anywhere on filebrowser
     const selectorContent = '.jp-DirListing-content';
-    
+
     app.contextMenu.addItem({
       type: 'submenu' as Menu.ItemType,
       submenu: recentsManager.recentsMenu,

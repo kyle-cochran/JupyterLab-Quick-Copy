@@ -3,7 +3,6 @@
 [![Github Actions Status](https://github.com/kyle-cochran/jupyterlab-copy-to-recent/workflows/Build/badge.svg)](https://github.com/kyle-cochran/jupyterlab-copy-to-recent/actions/workflows/build.yml)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/kyle-cochran/jupyterlab-copy-to-recent/main?urlpath=lab)
 
-
 Context menu option to copy directly to recently modified folders.
 
 ![JupyterLab Copy To Recent demo](https://raw.githubusercontent.com/kyle-cochran/jupyterlab-copy-to-recent/main/jupyterlab-copy-to-recent.gif)
